@@ -1,4 +1,4 @@
-"""Deterministic, invented profiles for software demonstration, not measured XRD."""
+"""Generate synthetic Gaussian profiles with seeded noise."""
 import numpy as np
 from .bundle import csv_bytes
 from .core import Pattern

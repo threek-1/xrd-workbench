@@ -1,4 +1,4 @@
-"""Local Streamlit application; no cloud upload, remote API or model required."""
+"""Streamlit interface for XRD processing and comparison."""
 from dataclasses import asdict, replace
 from io import BytesIO
 import json
@@ -42,7 +42,7 @@ def main():
         st.divider()
         st.markdown("**工作流程**\n\n① 导入样品与参考库\n\n② 设置处理与匹配\n\n③ 检查候选及逐峰证据\n\n④ 导出图谱和可复现记录")
         st.divider()
-        st.caption("v0.2 · 本地运行\n\n支持一维连续谱；物相信息由用户填写。")
+        st.caption("本地运行\n\n支持一维连续谱；物相信息由用户填写。")
     if demo:
         entries = demo_inputs()
         samples, refs = entries[:1], entries[1:]
@@ -116,8 +116,7 @@ def main():
             with st.expander("参考谱英文图例（与原文件对应保存在导出包）"):
                 for index, (name, _) in enumerate(refs, 1):
                     stem = Path(name).stem
-                    # Keep the original filename in the UI/provenance while
-                    # choosing a portable default for the scientific figure.
+                    # Use an ASCII figure label when the source filename needs other fonts.
                     default_label = stem if stem.isascii() else f"Reference {index}"
                     reference_labels[name] = st.text_input(name, value=default_label, key="label_"+name)
             with st.expander("参考物相与结构信息（用于分析报告）", expanded=not demo):

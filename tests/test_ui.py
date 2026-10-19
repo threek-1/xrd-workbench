@@ -18,4 +18,3 @@ def test_demo_end_to_end(monkeypatch):
     assert {"实测谱图", "对比图", "分析报告"}.issubset({tab.label for tab in at.tabs})
     report=result["meta"]["reports"][result["target"]]
     assert "User-declared phase" in report["markdown"]
-    assert report["data"]["api_calls"]==0

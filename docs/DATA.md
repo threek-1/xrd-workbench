@@ -1,6 +1,6 @@
 # Data and source availability
 
-The repository contains source code, an original tutorial, and synthetic demonstration data. It does not contain the private experimental files used during local import checks, commercial reference cards or a diffraction database.
+The repository contains source code, an original tutorial, and synthetic demonstration data. Experimental files and third-party reference libraries are not included.
 
 | Files | Origin | Units and purpose |
 |---|---|---|
@@ -15,4 +15,4 @@ Original code, documentation and synthetic examples are distributed under AGPL-3
 
 Analysis archives contain unchanged uploaded files, processed data, figure source data, parameters, dependency versions, reports, checksums and replay scripts. Check every file before sharing such an archive. Use the source repository for software distribution rather than uploading a private analysis archive.
 
-For reproducible citation, record the software version and commit identifier together with the analysis archive. No DOI or experimentally validated reference dataset is currently assigned to this project.
+For reproducible citation, record the software version and commit identifier together with the analysis archive.

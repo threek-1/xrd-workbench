@@ -1,4 +1,4 @@
-"""Single-panel, editable scientific figures with explicit display offsets."""
+"""Render scan plots and check exported PDF text."""
 from __future__ import annotations
 from io import BytesIO
 import textwrap
@@ -23,7 +23,7 @@ def make_figure(patterns, *, mode="stacked", width_mm=180, height_mm=None, label
     labels = labels or [p.name for p in patterns]
     if len(labels) != len(patterns):
         raise ValueError("Each pattern needs one label.")
-    # Full label mapping is preserved in export metadata, never inferred from truncation.
+    # Store full labels separately from the shortened display labels.
     display = [textwrap.shorten(str(s).replace("_", " "), width=35 if width_mm >= 150 else 22,
                                 placeholder="…") for s in labels]
     display = [f"{i+1}. {label}" for i, label in enumerate(display)]
@@ -47,7 +47,7 @@ def make_figure(patterns, *, mode="stacked", width_mm=180, height_mm=None, label
         for i, (p, label) in enumerate(zip(patterns, display)):
             color = PALETTE[i % len(PALETTE)]
             offset = (len(patterns)-1-i)*1.65*span - float(p.y.min()) if mode == "stacked" and len(patterns) > 1 else 0.
-            # Preserve measured values: offsets only; no hidden scaling or clipping.
+            # Translate each trace vertically for stacked display.
             y = p.y + offset
             ax.plot(p.x, y, color=color, lw=.85, label=label)
             lower.append(float(y.min()))
@@ -61,7 +61,7 @@ def make_figure(patterns, *, mode="stacked", width_mm=180, height_mm=None, label
         if mode == "overlay":
             ax.legend(loc="lower left", bbox_to_anchor=(0, 1.01), borderaxespad=0.,
                       frameon=False, ncol=1)
-            # Allocate physical room for the legend; no mask over diffraction peaks.
+            # Reserve space above the axes for the legend.
             fig.subplots_adjust(top=1-(9+5*len(patterns))/h)
         ax.set_ylim(min(lower)-.08*span, max(upper)+.06*span)
         ax.set_xlim(min(p.x[0] for p in patterns), max(p.x[-1] for p in patterns))
@@ -97,7 +97,7 @@ def export_figure(fig):
 
 
 def audit_pdf(pdf_bytes):
-    """Portable text QA; does not claim a complete scientific or Nature audit."""
+    """Check PDF text size, overlap and page bounds."""
     doc = fitz.open(stream=pdf_bytes, filetype="pdf")
     problems, min_font = [], float("inf")
     for page in doc:

@@ -1,4 +1,4 @@
-"""Regenerate the invented demonstration spectra; never represents measured data."""
+"""Write the synthetic example scans to examples/."""
 from pathlib import Path
 from xrd_workbench.demo import demo_inputs
 root = Path(__file__).resolve().parents[1] / "examples"

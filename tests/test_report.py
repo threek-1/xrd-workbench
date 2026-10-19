@@ -15,11 +15,10 @@ def scan(name="Sample"):
     return Pattern(name,x,100+800*sum(np.exp(-.5*((x-p)/.12)**2) for p in [12,20,32]))
 
 
-def test_unknown_identity_stays_unknown_without_api():
+def test_unknown_identity_stays_unknown():
     p,ref=scan(),scan("ref")
     comparison={"ranked":[compare(p,ref)],"rejected":[]}
     report=build_report(p,comparison)
-    assert report["data"]["api_calls"]==0
     assert report["data"]["structure_hypothesis"]["status"]=="reference_candidate"
     assert "物相名未知" in report["markdown"]
     assert report["data"]["boundaries"]["structure_solved"] is False

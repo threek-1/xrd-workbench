@@ -1,57 +1,53 @@
-# Reproducibility and figure QA
+# Export and replay
 
-## Processing replay
+## Archive contents
 
-Unzip an export into its own directory, activate an environment containing the project and recorded dependency versions, then run:
+| Path | Contents |
+|---|---|
+| `raw/` | Uploaded files, unchanged |
+| `measurement/` | Raw-sample plot, numerical source and plot checks |
+| `figure.*` | Comparison plot in PDF, SVG, PNG and TIFF |
+| `processed/` | Data used in the comparison plot |
+| `analysis/` | Processed scans and peak tables for all samples and references |
+| `report.md`, `report.json` | Selected sample report |
+| `reports/` | Reports for all samples |
+| `comparisons.json` | Reference rankings and peak pairs |
+| `manifest.json` | Sources, processing settings, software environment and display offsets |
+| `checksums.sha256` | File hashes |
+
+## Repeat the analysis
+
+Extract the archive into a separate directory. Activate an environment with the project and the dependency versions recorded in the manifest, then run:
 
 ```bash
 python reproduce_analysis.py
 ```
 
-The script reads unchanged raw files with recorded column choices, skip counts and wavelengths, repeats the sample/reference recipes, reruns reference ranking and regenerates both figures and every sample report. Rebuilt report data must equal archived report data. It verifies the recomputed plotted arrays against archived `processed/` files. `reproduced-comparisons.json` can be compared with `comparisons.json`. Floating-point numerical reproducibility is the target; PDF creation timestamps and library versions can prevent byte-identical figures.
+The script reads the raw files, applies the recorded processing settings, repeats matching and regenerates both plots and the reports. It compares the results with the archived numerical data and reports. PDF timestamps and library differences may prevent byte-identical plot files.
 
-`python reproduce.py` is a shorter route that redraws comparison data in `processed/` and raw measurement data in `measurement/source.csv` without repeating analysis. `analysis/` holds processed CSV and peak tables for every analyzed pattern, including unplotted samples. `manifest.analysis_patterns` provides the ordered mapping. `peaks.csv` is the selected sample's table.
+To redraw the figures without repeating analysis:
 
-## Figure contract
+```bash
+python reproduce.py
+```
 
-- Question: How does a supplied sample profile compare with its candidate reference profiles over the measured angle range?
-- Evidence: one axis, all retained observations, explicitly recorded normalization and display translations, no optimized horizontal shifts.
-- Archetype: two independent single-axis figures (measurement and comparison). Multi-panel alignment is not applicable.
-- Backend: Python / matplotlib exclusively for drawing and raster/vector output.
-- Formats: 88, 120 or 180 mm widths in UI, editable PDF/SVG text, 600 dpi PNG/TIFF. Height adapts to trace count; smallest configured text is 8 pt, minimum audited floor 5 pt.
-- Interpretation: synthetic demonstration data are not experiments. Individual scans have no inferential error bars; adjacent intensity readings are not independent replicates. Peak evidence is tabulated rather than crowding auto-labels over curves.
-- Direct trace labels may be abbreviated. Numbered full-to-display mapping is always in the manifest. Unsupported glyphs block export; use short Latin labels.
+This reads `processed/` for the comparison plot and `measurement/source.csv` for the raw-sample plot.
 
-## Portable checks
+## Plot settings and checks
 
-Every normal export checks PDF text page bounds, pairwise text overlap and a 5 pt font floor using PyMuPDF. A failure blocks creation of the downloadable export. These checks do not constitute a full typography, curve-collision, scientific-validity or accessibility review. Status fields explicitly identify their limited scope and the requirement for visual review.
+The UI offers widths of 88, 120 and 180 mm. PDF and SVG preserve vector paths and editable text; PNG and TIFF use 600 dpi. Comparison plots record any vertical display offset. Matching offsets are not applied to plotted angles.
 
-## Optional installed Nature Skills integration
+Each export checks PDF text size, text overlap and page bounds with PyMuPDF. These checks do not cover every curve/label collision. Inspect figures at their final print size, especially after changing labels or layout.
 
-The project development workflow uses the installed Nature Figure, Nature Statistics and Nature Data skills. External skill contents are not copied into this repository. Scientific methods and provenance are explicitly documented here so ordinary users can run the app without private developer tools.
-
-If an installed Nature Figure skill is available, configure its directory:
+For additional checks with an installed Nature Figure package, set:
 
 ```bash
 export NATURE_FIGURE_SKILL=/absolute/path/to/nature-figure
 xrd-workbench ui
 ```
 
-Then each new export additionally runs the skill's source validator, exported PDF glyph-size audit and PDF collision audit; nonzero exits block export. QA logs are included in the ZIP. Single-axis geometry is recorded as not applicable for panel alignment. Missing/failed tools are never reported as passed. Additional optional dependencies requested by the installed audit tool must be installed in the running environment.
+The exporter then runs source, PDF-text and collision checks and saves their logs in the archive. A failed check blocks export. The external package and its dependencies must be installed separately.
 
-For independent developer verification:
+## Sharing
 
-```bash
-python "$NATURE_FIGURE_SKILL/scripts/validate_figure.py" src/xrd_workbench/figures.py --json
-python "$NATURE_FIGURE_SKILL/scripts/audit_pdf_text.py" extracted/figure.pdf --min-pt 5 --json
-python "$NATURE_FIGURE_SKILL/scripts/audit_figure_collisions.py" extracted/figure.pdf \
-  --json-out extracted/collision-audit.json
-```
-
-A `REVIEW REQUIRED` warning still needs explicit visual disposition, even when the tool exits zero. Inspect the complete figure at actual physical dimensions after every data/label/layout change. Automated checks alone cannot establish publication readiness.
-
-## Data/code availability and licensing
-
-Only original deterministic synthetic data are included in this source distribution. They are generated by `scripts/generate_demo.py`, with seed 20261018. Phase A and B are invented peak profiles and are not structure-derived identities. No chemical database, experiment, detector image or paid reference card is redistributed.
-
-Generated ZIPs are local user artifacts, not public datasets or DOI deposits. No repository URL, DOI, author identity or accession is invented. If publishing a scientific application, deposit the supporting dataset and release separately using appropriate identifiers, provenance, software versions and rights. The project AGPL software licence does not relicense uploaded third-party files.
+The archive contains the uploaded source files. Check their sharing permissions before distributing it. The software licence does not change the rights attached to uploaded data. Included demonstration data are described in [DATA.md](DATA.md).

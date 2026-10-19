@@ -1,52 +1,55 @@
 # XRD Workbench
 
-A local powder X-ray diffraction workbench for numerical scan parsing, traceable processing, reference-library screening and publication-oriented figures.
+A local tool for powder XRD scan processing, reference comparison, plotting and reports.
 
-[中文](README.md) · [Chinese tutorial](docs/TUTORIAL.zh-CN.md) · [Methods](docs/METHODS.md) · [Reproducibility](docs/REPRODUCIBILITY.md)
+[中文](README.md) · [Chinese tutorial](docs/TUTORIAL.zh-CN.md) · [Methods](docs/METHODS.md) · [Export and replay](docs/REPRODUCIBILITY.md)
 
-## Run
+![Synthetic comparison example](docs/demo-figure.png)
+
+The example profiles are synthetic and do not represent real compounds.
+
+## Features
+
+- TXT, CSV, XY, DAT and TSV continuous scans with column selection.
+- Angle cropping, normalization, optional AsLS background subtraction and Savitzky–Golay smoothing.
+- Peak detection, d-spacing for known wavelengths and one-to-one reference matching.
+- Separate raw-sample and comparison plots in PDF, SVG and 600 dpi PNG/TIFF.
+- Reference metadata, peak assignments and per-sample reports.
+- Raw files, processed arrays, parameters and replay scripts in one export.
+
+All computation runs locally. Users supply the reference library; no phase database is bundled.
+
+## Install
 
 Python 3.11–3.13:
 
 ```bash
+git clone https://github.com/threek-1/xrd-workbench.git
+cd xrd-workbench
 python -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .
 xrd-workbench ui
 ```
 
-Open <http://127.0.0.1:8501>. A deterministic, explicitly synthetic demonstration is included. The interface currently uses Chinese labels; the Python API and CLI use English. The launcher binds to localhost and disables Streamlit usage statistics. Installation downloads dependencies; analysis requires no remote API.
+Open <http://127.0.0.1:8501>. The interface uses Chinese labels. On Windows, run `.venv\Scripts\python.exe` and `.venv\Scripts\xrd-workbench.exe` directly after creating the environment. Installation downloads dependencies; subsequent analysis runs locally.
 
-## Features
+## Input and interpretation
 
-- TXT/CSV/XY/DAT/TSV continuous scans, explicit column mapping and strict invalid-row checks.
-- Immutable angle/intensity arrays, raw-file hashes and processing history.
-- Cropping, max/area normalization, optional asymmetric least-squares background correction and Savitzky–Golay smoothing.
-- One-to-one peak matching, profile cosine similarity, overlap penalty, unmatched/missing peaks and optional exploratory reference shift.
-- Separate full raw-measurement and processed comparison figures.
-- Optional user-declared compound, formula, structure, CIF origin and source fields.
-- On-page Markdown/JSON reports with major peak candidates, ambiguous matches and qualified structure hypotheses; no model API, AI account or API key is needed. Unknown identities stay unknown.
-- Editable vector PDF/SVG and 600 dpi PNG/TIFF, stacked or overlaid at physical print dimensions.
-- Raw inputs, all processed scans and peak tables, candidate evidence, parameters, checksums and replay scripts in one ZIP.
-- Shared scientific core for the local web app and CLI.
+Input must be a continuous 2θ (degrees) / intensity scan. Duplicate angles, missing values and non-finite numbers are rejected. Extra columns and numeric instrument headers require explicit settings. CIF, proprietary RAW, XRDML, images and discrete peak lists are not supported.
 
-## Boundaries
+The raw-sample plot retains all imported points. Comparison plots and reports use the selected processing parameters. Reference names and structures are user-supplied metadata. Scores rank the supplied references; they are not probabilities or phase fractions. The program does not perform structure solution, Rietveld refinement or quantitative phase analysis. See [Methods](docs/METHODS.md).
 
-Inputs must be continuous **2θ (degrees) / intensity** scans. No proprietary RAW, XRDML, CIF, image digitization or two-dimensional detector support is implemented in v0.2. Declaring a CIF origin records provenance only; no CIF is parsed or independently verified. A reference filename labels a supplied candidate; it is not a verified chemical identity. The library is supplied by the user; no proprietary diffraction database is bundled.
-
-Scores are heuristic rankings, not calibrated probabilities, purity measurements or phase fractions. The algorithm has not been validated on a real labelled experimental benchmark. It does not perform Rietveld refinement, structure solution, quantitative mixture fitting or crystallite-size estimation. Widths are measured at half prominence, not instrument-corrected FWHM.
-
-Data are never shifted horizontally in the figure by the matching optimizer. Any vertical display translations are recorded. Negative processed values are retained. Unknown wavelengths remain unknown, while incompatible declared wavelengths block angle-space comparisons.
-
-## Test and build
+## Development
 
 ```bash
+python -m pip install -e ".[dev]"
 python -m pytest -q
 python -m build
 ```
 
-See [QA](docs/QA.md) for checks actually executed. Generic PDF text checks are included. Full Nature Skills auditing is an optional external developer integration; those skills are not bundled. Final-size human review remains necessary.
+See [Contributing](CONTRIBUTING.md) for changes and bug reports.
 
-## Licence and data
+## Licence
 
-AGPL-3.0-or-later. See [LICENSE](LICENSE). Original synthetic examples are distributed under the same terms. User and third-party datasets retain their original rights. See [data provenance](docs/DATA.md) for the included examples and excluded private inputs.
+[AGPL-3.0-or-later](LICENSE) covers the source, tutorial and synthetic examples. User data retain their original rights. See [data provenance](docs/DATA.md).

@@ -1,4 +1,4 @@
-"""Validated data model, conservative parser and explicit processing recipe."""
+"""Scan data, text parsing and processing operations."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field, replace, asdict

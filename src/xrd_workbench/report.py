@@ -1,4 +1,4 @@
-"""Deterministic evidence reports; no model calls, phase database or invented identity."""
+"""Build peak-comparison reports from processed scans."""
 from __future__ import annotations
 import re
 from .core import detect_peaks
@@ -6,14 +6,14 @@ from .matching import MatchOptions
 
 
 def safe_text(value):
-    """Keep user/file labels as literal Markdown text, not report instructions."""
+    """Escape labels for Markdown text and table cells."""
     value = str(value or "").replace("\n", " ").replace("\r", " ")
     value = value.replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
     return re.sub(r"([\\`*_{}\[\]()#+.!|])", r"\\\1", value)
 
 
 def build_report(sample, comparison, options=MatchOptions(), reference_info=None, raw_points=None):
-    """Return structured and Markdown evidence for a single processed scan."""
+    """Return report data and Markdown for one sample."""
     reference_info = reference_info or {}
     peaks = detect_peaks(sample, options.prominence, options.min_peak_distance_deg)
     main = sorted(peaks, key=lambda p: (-p["prominence"], p["two_theta_deg"]))[:10]
@@ -51,8 +51,7 @@ def build_report(sample, comparison, options=MatchOptions(), reference_info=None
             structure["statement"] = (f"最高排名的有峰位支持参考为 {best['reference']}，"
                 f"但只有 {best['matched_count']} 对峰对应，证据不足以推断结构类型。")
     warnings = list(dict.fromkeys(w for r in ranked for w in r.get("warnings", [])))
-    data = {"engine": "local_deterministic_rules", "api_calls": 0,
-            "sample": sample.name, "sample_kind": sample.kind,
+    data = {"sample": sample.name, "sample_kind": sample.kind,
             "raw_points": raw_points, "processed_points": len(sample.x),
             "range_deg": [float(sample.x[0]), float(sample.x[-1])],
             "wavelength_angstrom": sample.wavelength, "processing": list(sample.history),

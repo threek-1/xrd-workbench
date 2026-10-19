@@ -1,4 +1,4 @@
-"""Reference-library screening, not chemical identification or phase quantification."""
+"""Peak assignment and profile scoring against reference scans."""
 from __future__ import annotations
 from dataclasses import dataclass, asdict
 import numpy as np

@@ -43,4 +43,4 @@ Optional shifts evaluate 41 equally spaced offsets over ±max_shift plus exactly
 
 The analysis unit is one supplied scan, not thousands of independent experimental replicates. No inferential statistical tests are performed. Simulated data are labelled synthetic. Processing output, matching metrics and d-spacings are calculated quantities. Candidate assignments are hypotheses limited to the uploaded reference library. Mixtures, texture, size/strain broadening, missing references, fluorescence and preparation artifacts can affect rankings.
 
-High similarity does not establish a pure phase. Unmatched peaks are unexplained features, not automatically an impurity. Low similarity does not independently prove absence. Quantitative phase analysis, instrument calibration, chemistry/element constraints and real benchmark validation remain outside v0.2.
+High similarity does not establish a pure phase. Unmatched peaks are unexplained features, not automatically an impurity. Low similarity does not independently prove absence. Quantitative phase analysis, instrument calibration, chemistry/element constraints and real benchmark validation are not implemented.

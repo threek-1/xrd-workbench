@@ -1,4 +1,4 @@
-"""Reproducible downloadable archives: sources, recipes, plots, numerical evidence."""
+"""Archive raw inputs, processed data, figures and replay scripts."""
 from __future__ import annotations
 from io import BytesIO, StringIO
 from hashlib import sha256
@@ -43,7 +43,7 @@ def table_bytes(rows):
 
 
 def nature_audit(fig, pdf_bytes):
-    """Use installed Nature Skills when configured; never vendor private skill code."""
+    """Run external figure checks when NATURE_FIGURE_SKILL is configured."""
     root = os.environ.get("NATURE_FIGURE_SKILL")
     if not root:
         return {}, {"status": "not_run", "reason": "NATURE_FIGURE_SKILL is not configured"}
