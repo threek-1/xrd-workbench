@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "xrd-workbench"
+version = "0.2.0"
+description = "Local, reproducible powder XRD processing, reference screening and scientific figures"
+readme = "README.md"
+requires-python = ">=3.11"
+license = "AGPL-3.0-or-later"
+authors = [{name = "XRD Workbench contributors"}]
+dependencies = [
+  "numpy>=1.26,<3", "scipy>=1.12,<2", "matplotlib>=3.8,<4",
+  "pandas>=2.2,<3", "streamlit>=1.49,<2", "pymupdf>=1.24,<2"
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8,<9", "build>=1,<2"]
+
+[project.scripts]
+xrd-workbench = "xrd_workbench.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.setuptools.package-data]
+xrd_workbench = ["*.txt"]

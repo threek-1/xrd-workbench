@@ -1,0 +1,28 @@
+"""Redraw both figures from archived figure data; run with xrd-workbench installed."""
+from pathlib import Path
+import json
+import numpy as np
+from xrd_workbench.core import Pattern
+from xrd_workbench.figures import make_figure, export_figure, audit_pdf
+import matplotlib.pyplot as plt
+root = Path(__file__).resolve().parent
+m = json.loads((root / "manifest.json").read_text())
+
+def load_pattern(record, path):
+    xy = np.loadtxt(path, delimiter=",", skiprows=1)
+    return Pattern(record["name"], xy[:, 0], xy[:, 1], record["wavelength_angstrom"],
+                   record["kind"], record["metadata"], tuple(record["history"]))
+
+def draw(patterns, style, prefix):
+    fig, _ = make_figure(patterns, mode=style["mode"], width_mm=style["width_mm"],
+                         height_mm=style["height_mm"], labels=[r["label"] for r in style["traces"]])
+    plots = export_figure(fig)
+    assert audit_pdf(plots["pdf"])["status"] == "pass"
+    for ext, data in plots.items():
+        (root / f"{prefix}.{ext}").write_bytes(data)
+    plt.close(fig)
+
+patterns = [load_pattern(p, root / f"processed/{i:02d}.csv") for i,p in enumerate(m["patterns"],1)]
+draw(patterns, m["figure"], "reproduced-comparison")
+raw = load_pattern(m["measurement"]["pattern"], root / "measurement/source.csv")
+draw([raw], m["measurement"]["figure"], "reproduced-measurement")

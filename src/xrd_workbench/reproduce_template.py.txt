@@ -1,0 +1,64 @@
+"""Repeat parsing, processing, screening and figure generation from unchanged raw inputs.
+Run: python reproduce_analysis.py (requires xrd-workbench and recorded dependencies).
+"""
+from pathlib import Path
+from dataclasses import replace
+import json
+import numpy as np
+import matplotlib.pyplot as plt
+from xrd_workbench.core import parse_bytes, process, Recipe, detect_peaks
+from xrd_workbench.matching import MatchOptions, rank_references
+from xrd_workbench.figures import make_figure, export_figure, audit_pdf
+from xrd_workbench.bundle import json_bytes, csv_bytes
+from xrd_workbench.report import build_report
+
+root = Path(__file__).resolve().parent
+m = json.loads((root / "manifest.json").read_text())
+sources = {s["original_name"]: root / s["file"] for s in m["sources"]}
+r = m["recipe"]
+raw_patterns = {}
+def rerun(records, recipe):
+    output = []
+    for rec in records:
+        md = rec["metadata"]
+        raw = parse_bytes(sources[rec["name"]].read_bytes(), rec["name"], rec["wavelength_angstrom"],
+                          tuple(md["columns_zero_based"]), md["skip_rows"])
+        raw = replace(raw, kind=rec["kind"])
+        raw_patterns[raw.name] = raw
+        output.append(process(raw, Recipe(**recipe)))
+    return output
+samples = rerun(r["all_sample_records"], r["sample"])
+references = rerun(r["all_reference_records"], r["reference"])
+options = MatchOptions(**r["matching"])
+comparisons = {}
+for sample in samples:
+    ranked, rejected = rank_references(sample, references, options)
+    comparisons[sample.name] = {"ranked": ranked, "rejected": rejected}
+(root / "reproduced-comparisons.json").write_bytes(json_bytes(comparisons))
+lookup = {p.name: p for p in samples+references}
+patterns = [lookup[p["name"]] for p in m["patterns"]]
+for i, p in enumerate(patterns, 1):
+    saved = np.loadtxt(root / f"processed/{i:02d}.csv", delimiter=",", skiprows=1)
+    np.testing.assert_allclose(np.column_stack((p.x,p.y)), saved, rtol=1e-10, atol=1e-10)
+fig, _ = make_figure(patterns, mode=m["figure"]["mode"], width_mm=m["figure"]["width_mm"],
+                     height_mm=m["figure"]["height_mm"], labels=[t["label"] for t in m["figure"]["traces"]])
+plots = export_figure(fig)
+assert audit_pdf(plots["pdf"])["status"] == "pass"
+for ext, data in plots.items():
+    (root / f"recomputed.{ext}").write_bytes(data)
+plt.close(fig)
+measurement = raw_patterns[m["measurement"]["pattern"]["name"]]
+style = m["measurement"]["figure"]
+fig, _ = make_figure([measurement], mode=style["mode"], width_mm=style["width_mm"],
+                     height_mm=style["height_mm"], labels=[t["label"] for t in style["traces"]])
+measurement_plots = export_figure(fig)
+assert audit_pdf(measurement_plots["pdf"])["status"] == "pass"
+for ext, data in measurement_plots.items():
+    (root / f"recomputed-measurement.{ext}").write_bytes(data)
+plt.close(fig)
+for i, sample in enumerate(samples, 1):
+    report = build_report(sample, comparisons[sample.name], options, r.get("reference_info", {}),
+                          len(raw_patterns[sample.name].x))
+    (root / f"recomputed-report-{i:02d}.md").write_text(report["markdown"], encoding="utf-8")
+    assert report == m["reports"][sample.name]
+print("Recomputed from raw inputs; processed arrays match archived figure data.")

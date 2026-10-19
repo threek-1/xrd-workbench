@@ -1,0 +1,5 @@
+include README.en.md CONTRIBUTING.md app.py
+recursive-include docs *.md *.txt *.png *.pdf
+recursive-include examples *.csv
+recursive-include scripts *.py
+recursive-include .streamlit *.toml
