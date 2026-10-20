@@ -12,11 +12,13 @@
 
 ## 2. 安装与启动
 
-需要 Python 3.11–3.13。下载仓库 ZIP 并解压，或使用 Git 克隆；之后在包含 `pyproject.toml` 的项目文件夹中打开终端。
+需要 Python 3.11–3.13。下面使用 Git 下载项目，再进入项目目录安装。请逐行执行；某一步出现错误时先处理该错误，不要继续后面的命令。
 
-macOS / Linux：
+macOS / Linux（已安装 Git）：
 
 ```bash
+git clone https://github.com/threek-1/xrd-workbench.git
+cd xrd-workbench
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .
@@ -26,10 +28,24 @@ xrd-workbench ui
 Windows PowerShell 可以直接调用虚拟环境里的程序，无需修改脚本执行策略：
 
 ```powershell
+git clone https://github.com/threek-1/xrd-workbench.git
+cd xrd-workbench
 py -3.12 -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e .
 .\.venv\Scripts\xrd-workbench.exe ui
 ```
+
+**安装命令必须在项目文件夹内执行。** `python -m pip install -e .` 最后的 `.` 表示当前文件夹，不是自动寻找下载的项目。安装前运行 `ls pyproject.toml`（PowerShell 用 `Get-Item pyproject.toml`），应能找到该文件。若找不到，先检查 `cd` 是否成功。
+
+若下载的是 GitHub ZIP，先解压，再进入实际解压目录。例如，文件位于 macOS 的下载目录且名称为 `xrd-workbench-main` 时，运行：
+
+```bash
+cd ~/Downloads/xrd-workbench-main
+```
+
+然后执行上面从创建虚拟环境开始的命令，无需再次克隆。若路径不同，改用实际路径；已有项目也无需重复运行 `git clone`。
+
+终端出现 `A new release of pip is available` 只是 pip 自身的可选更新提示，与本程序是否安装成功无关。无需为了启动程序升级 pip。若前面出现红色 `ERROR`，应以该错误为准；安装失败时继续运行会出现 `command not found`。
 
 浏览器访问 <http://127.0.0.1:8501>。服务运行期间保留终端；结束时在终端按 Ctrl+C。若端口已被占用，可运行 `xrd-workbench ui --port 8502`，然后访问对应地址。
 
@@ -181,6 +197,10 @@ python reproduce_analysis.py
 
 | 情况 | 处理办法 |
 |---|---|
+| `does not appear to be a Python project` | 当前目录不含项目配置；先进入含 `pyproject.toml` 的项目文件夹，再安装 |
+| `command not found: xrd-workbench` | 确认安装成功，并使用安装时的虚拟环境；重新打开终端后需再次激活环境 |
+| `A new release of pip is available` | pip 的可选更新提示，可忽略；检查前面是否另有安装错误 |
+| `ERR_CONNECTION_REFUSED` | 本地服务未启动或已退出；运行启动命令，待终端显示地址后访问，并保持服务运行 |
 | `Ambiguous numeric header/data` | 查看所报行，确认实际数据起点；明确设置跳过头部行数 |
 | 提示需要指定列 | 在高级设置选择角度列和强度列 |
 | 缺失值、重复角度或非有限数报错 | 返回原文件核查；不要自动补零或平均 |

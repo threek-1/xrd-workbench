@@ -26,11 +26,13 @@
 ```bash
 git clone https://github.com/threek-1/xrd-workbench.git
 cd xrd-workbench
-python -m venv .venv
+python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -e .
 xrd-workbench ui
 ```
+
+`pip install -e .` 必须在含 `pyproject.toml` 的项目目录执行；不要跳过 `cd xrd-workbench`。若安装报错，先解决错误再运行启动命令。
 
 浏览器打开 <http://127.0.0.1:8501>。Windows 安装步骤见[使用教程](docs/TUTORIAL.zh-CN.md#2-安装与启动)。首次安装需联网下载依赖；日常分析在本地运行。服务按本地单用户使用设计。
 
