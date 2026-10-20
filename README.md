@@ -89,7 +89,7 @@ xrd-workbench analyze "examples/Synthetic sample.csv" \
 ## 开发
 
 ```bash
-python -m pip install -e ".[dev]"
+python -X utf8 -m pip install ".[dev]"
 python -m pytest -q
 python -m build
 ```
