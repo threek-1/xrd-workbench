@@ -93,9 +93,11 @@ def main(argv=None):
                                    'Use --venv .venv-xrd to create a separate environment.'.format(env_dir))
         else:
             run([info['executable'], '-I', '-m', 'venv', env_dir])
-        run([executable, '-I', '-m', 'pip', 'install', '--upgrade', 'pip'])
-        run([executable, '-I', '-m', 'pip', 'install', '--only-binary=:all:', root])
-        run([executable, '-I', '-m', 'pip', 'check'])
+        # Use UTF-8 even when a Windows terminal redirects output in a legacy locale.
+        pip = [executable, '-I', '-X', 'utf8', '-m', 'pip']
+        run(pip + ['install', '--upgrade', 'pip'])
+        run(pip + ['install', '--only-binary=:all:', root])
+        run(pip + ['check'])
         print('\nInstallation complete. Start the application with:')
         command = subprocess.list2cmdline([str(executable), '-m', 'xrd_workbench.cli', 'ui'])
         if os.name == 'nt':
