@@ -7,7 +7,7 @@ name = "xrd-workbench"
 version = "0.2.0"
 description = "Local, reproducible powder XRD processing, reference screening and scientific figures"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.11,<3.15"
 license = "AGPL-3.0-or-later"
 authors = [{name = "XRD Workbench contributors"}]
 dependencies = [

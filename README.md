@@ -21,20 +21,29 @@
 
 ## 安装与启动
 
-需要 Python 3.11–3.13。
+需要标准 64 位 CPython 3.11–3.14。安装时需要网络，依赖由 pip 自动下载。
+
+macOS / Linux：
 
 ```bash
 git clone https://github.com/threek-1/xrd-workbench.git
 cd xrd-workbench
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -e .
-xrd-workbench ui
+python3 install.py
+.venv/bin/python -m xrd_workbench.cli ui
 ```
 
-`pip install -e .` 必须在含 `pyproject.toml` 的项目目录执行；不要跳过 `cd xrd-workbench`。若安装报错，先解决错误再运行启动命令。
+Windows PowerShell：
 
-浏览器打开 <http://127.0.0.1:8501>。Windows 安装步骤见[使用教程](docs/TUTORIAL.zh-CN.md#2-安装与启动)。首次安装需联网下载依赖；日常分析在本地运行。服务按本地单用户使用设计。
+```powershell
+git clone https://github.com/threek-1/xrd-workbench.git
+cd xrd-workbench
+py install.py
+.\.venv\Scripts\python.exe -m xrd_workbench.cli ui
+```
+
+安装脚本自动寻找已安装的兼容 Python，创建独立环境并检查依赖。无需手动激活环境，也不要求固定安装 Python 3.12。只有安装成功后再执行启动命令；若 `py` 不存在但 `python` 可用，使用 `python install.py`。没有 Python 时先从 [python.org](https://www.python.org/downloads/) 安装；脚本不会自动安装 Python 本身。
+
+浏览器打开终端显示的地址（默认 <http://127.0.0.1:8501>），并保持终端运行。ZIP 下载、手动安装和报错处理见[使用教程](docs/TUTORIAL.zh-CN.md#2-安装与启动)。支持范围和隔离测试方式见[环境说明](docs/INSTALLATION.md)。
 
 ## 输入
 

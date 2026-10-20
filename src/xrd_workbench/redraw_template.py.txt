@@ -6,7 +6,7 @@ from xrd_workbench.core import Pattern
 from xrd_workbench.figures import make_figure, export_figure, audit_pdf
 import matplotlib.pyplot as plt
 root = Path(__file__).resolve().parent
-m = json.loads((root / "manifest.json").read_text())
+m = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
 
 def load_pattern(record, path):
     xy = np.loadtxt(path, delimiter=",", skiprows=1)

@@ -21,18 +21,16 @@ All computation runs locally. Users supply the reference library; no phase datab
 
 ## Install
 
-Python 3.11–3.13:
+Standard 64-bit CPython 3.11–3.14:
 
 ```bash
 git clone https://github.com/threek-1/xrd-workbench.git
 cd xrd-workbench
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install -e .
-xrd-workbench ui
+python3 install.py
+.venv/bin/python -m xrd_workbench.cli ui
 ```
 
-Open <http://127.0.0.1:8501>. The interface uses Chinese labels. On Windows, run `.venv\Scripts\python.exe` and `.venv\Scripts\xrd-workbench.exe` directly after creating the environment. Installation downloads dependencies; subsequent analysis runs locally.
+Open <http://127.0.0.1:8501>. The interface uses Chinese labels. On Windows, run `py install.py`, then `.\.venv\Scripts\python.exe -m xrd_workbench.cli ui`. The installer selects a compatible installed Python and stops if setup fails. See [environment support](docs/INSTALLATION.md). Installation downloads dependencies; subsequent analysis runs locally.
 
 ## Input and interpretation
 

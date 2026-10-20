@@ -13,7 +13,7 @@ from xrd_workbench.bundle import json_bytes, csv_bytes
 from xrd_workbench.report import build_report
 
 root = Path(__file__).resolve().parent
-m = json.loads((root / "manifest.json").read_text())
+m = json.loads((root / "manifest.json").read_text(encoding="utf-8"))
 sources = {s["original_name"]: root / s["file"] for s in m["sources"]}
 r = m["recipe"]
 raw_patterns = {}

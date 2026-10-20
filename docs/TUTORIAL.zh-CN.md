@@ -12,44 +12,49 @@
 
 ## 2. 安装与启动
 
-需要 Python 3.11–3.13。下面使用 Git 下载项目，再进入项目目录安装。请逐行执行；某一步出现错误时先处理该错误，不要继续后面的命令。
+需要标准 64 位 CPython 3.11–3.14。推荐用安装脚本，它会检查可用解释器、创建项目环境并安装依赖，不会修改系统 Python。没有 Python 时，先从 [python.org](https://www.python.org/downloads/) 安装其中一个支持的版本。
 
 macOS / Linux（已安装 Git）：
 
 ```bash
 git clone https://github.com/threek-1/xrd-workbench.git
 cd xrd-workbench
-python3 -m venv .venv
-source .venv/bin/activate
-python -m pip install -e .
-xrd-workbench ui
+python3 install.py
+.venv/bin/python -m xrd_workbench.cli ui
 ```
 
-Windows PowerShell 可以直接调用虚拟环境里的程序，无需修改脚本执行策略：
+Windows PowerShell：
 
 ```powershell
 git clone https://github.com/threek-1/xrd-workbench.git
 cd xrd-workbench
-py -3.12 -m venv .venv
-.\.venv\Scripts\python.exe -m pip install -e .
-.\.venv\Scripts\xrd-workbench.exe ui
+py install.py
+.\.venv\Scripts\python.exe -m xrd_workbench.cli ui
 ```
 
-**安装命令必须在项目文件夹内执行。** `python -m pip install -e .` 最后的 `.` 表示当前文件夹，不是自动寻找下载的项目。安装前运行 `ls pyproject.toml`（PowerShell 用 `Get-Item pyproject.toml`），应能找到该文件。若找不到，先检查 `cd` 是否成功。
+请逐行执行。安装脚本显示 `Installation complete` 后，再执行最后一行启动程序。如果 `py` 不存在，但 `python --version` 能运行，可以将 `py install.py` 改为 `python install.py`。无需激活虚拟环境或修改 PowerShell 执行策略。
 
-若下载的是 GitHub ZIP，先解压，再进入实际解压目录。例如，文件位于 macOS 的下载目录且名称为 `xrd-workbench-main` 时，运行：
+脚本会优先使用当前兼容解释器，否则寻找电脑上其他兼容解释器。它不会因没有 Python 3.12 就失败；找不到任何支持的 Python 时会停止并说明要求。Windows 可以用 `py --list` 查看已有解释器。不要在环境创建失败后继续运行 `.venv` 下的命令。
+
+**没有 Git：**在仓库页面选择 Code → Download ZIP，解压后进入包含 `install.py` 和 `pyproject.toml` 的文件夹。例如 macOS 的下载目录：
 
 ```bash
 cd ~/Downloads/xrd-workbench-main
+python3 install.py
+.venv/bin/python -m xrd_workbench.cli ui
 ```
 
-然后执行上面从创建虚拟环境开始的命令，无需再次克隆。若路径不同，改用实际路径；已有项目也无需重复运行 `git clone`。
+路径不同则改为实际路径。在 Windows 中可打开解压文件夹，在资源管理器地址栏输入 `powershell` 回车，再执行 `py install.py`。已有项目无需重复克隆或再次 `cd` 到同名子目录。
 
-终端出现 `A new release of pip is available` 只是 pip 自身的可选更新提示，与本程序是否安装成功无关。无需为了启动程序升级 pip。若前面出现红色 `ERROR`，应以该错误为准；安装失败时继续运行会出现 `command not found`。
+已有 `.venv` 不完整或不兼容时，脚本不会覆盖它。可用 `py install.py --venv .venv-xrd`（macOS/Linux 使用 `python3`）创建另一个环境，再按安装结束时打印的命令启动。
 
-浏览器访问 <http://127.0.0.1:8501>。服务运行期间保留终端；结束时在终端按 Ctrl+C。若端口已被占用，可运行 `xrd-workbench ui --port 8502`，然后访问对应地址。
+需要手动安装时，先用 `python --version` 或 `python3 --version` 确认解释器在支持范围内，再运行 `python -m venv .venv`；之后用虚拟环境内的 Python 执行 `-m pip install -e .`。最后的 `.` 是当前目录，必须包含 `pyproject.toml`。
 
-首次安装需要联网下载依赖。日常解析、计算、绘图和报告均在本机完成，无需连接远程服务。不要把启动地址改为公网监听后直接提供公共服务；当前程序按本地单用户使用设计。
+浏览器访问终端打印的地址，默认 <http://127.0.0.1:8501>。服务运行期间保留终端；结束时按 Ctrl+C。端口占用时，在启动命令末尾加 `--port 8502`，访问对应地址。
+
+`A new release of pip is available` 只是 pip 的更新提示，不代表安装成功或失败。应检查是否有 `ERROR`；安装失败后继续启动会出现 `command not found`。
+
+首次安装需要联网下载依赖。日常分析在本机完成，无需 AI 账号、API Key 或本地科研技能包。具体操作系统、硬件和测试范围见[环境说明](INSTALLATION.md)。
 
 ## 3. 用合成示例跑完一次流程
 

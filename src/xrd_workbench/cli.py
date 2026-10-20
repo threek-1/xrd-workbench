@@ -11,6 +11,9 @@ from .bundle import make_bundle
 
 
 def main():
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(errors="backslashreplace")
     parser = argparse.ArgumentParser(description="Local numerical XRD workbench")
     sub = parser.add_subparsers(dest="command", required=True)
     ui = sub.add_parser("ui", help="Start the local web application")
@@ -54,7 +57,10 @@ def main():
                       recipe={"sample":asdict(recipe), "reference":asdict(ref_recipe), "matching":asdict(options),
                               "all_sample_records":[sample.info()], "all_reference_records":[p.info() for p in refs]},
                       comparisons={sample.name:{"ranked":ranked,"rejected":rejected}},
-                      peaks=detect_peaks(sample, args.prominence), measurement_pattern=parsed[0])
+                      peaks=detect_peaks(sample, args.prominence), measurement_pattern=parsed[0],
+                      labels=[Path(p.name).stem if Path(p.name).stem.isascii() else
+                              ("Sample" if i == 0 else f"Reference {i}")
+                              for i, p in enumerate([sample]+refs)])
         args.output.parent.mkdir(parents=True, exist_ok=True)
         args.output.write_bytes(bundle)
         print(f"Exported {args.output}; {len(ranked)} candidate references; {len(rejected)} rejected.")

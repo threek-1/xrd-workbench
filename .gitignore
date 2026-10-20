@@ -16,3 +16,6 @@ user-data/
 *.pem
 *.key
 *.zip
+
+artifacts/
+.venv-*/
