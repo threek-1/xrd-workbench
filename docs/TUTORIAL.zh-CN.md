@@ -48,7 +48,7 @@ python3 install.py
 
 已有 `.venv` 不完整或不兼容时，脚本不会覆盖它。可用 `py install.py --venv .venv-xrd`（macOS/Linux 使用 `python3`）创建另一个环境，再按安装结束时打印的命令启动。
 
-需要手动安装时，先用 `python --version` 或 `python3 --version` 确认解释器在支持范围内，再运行 `python -m venv .venv`；之后用虚拟环境内的 Python 执行 `-m pip install -e .`。最后的 `.` 是当前目录，必须包含 `pyproject.toml`。
+需要手动安装时，先用 `python --version` 或 `python3 --version` 确认解释器在支持范围内，再运行 `python -m venv .venv`；之后用虚拟环境内的 Python 执行 `-m pip install .`。最后的 `.` 是当前目录，必须包含 `pyproject.toml`。更新源码后，重新运行安装脚本即可更新环境中的程序。
 
 浏览器访问终端打印的地址，默认 <http://127.0.0.1:8501>。服务运行期间保留终端；结束时按 Ctrl+C。端口占用时，在启动命令末尾加 `--port 8502`，访问对应地址。
 

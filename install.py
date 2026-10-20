@@ -94,7 +94,7 @@ def main(argv=None):
         else:
             run([info['executable'], '-I', '-m', 'venv', env_dir])
         run([executable, '-I', '-m', 'pip', 'install', '--upgrade', 'pip'])
-        run([executable, '-I', '-m', 'pip', 'install', '--only-binary=:all:', '-e', root])
+        run([executable, '-I', '-m', 'pip', 'install', '--only-binary=:all:', root])
         run([executable, '-I', '-m', 'pip', 'check'])
         print('\nInstallation complete. Start the application with:')
         command = subprocess.list2cmdline([str(executable), '-m', 'xrd_workbench.cli', 'ui'])
